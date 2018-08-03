@@ -1,5 +1,5 @@
 //private calendar controller IIFE
-var eformCalendar = (function () {
+var pureJSCalendar = (function () {
     let wrap, label, calYear, calMonth, calDateFormat, firstDay;
 
     //check global variables for calendar widget and set default localization values
@@ -199,7 +199,7 @@ var eformCalendar = (function () {
         //}
 
         for (i = 0; i < calendar.length; i++) {
-            calendar[i] = '<tr><td class="eformDay" onclick="eformCalendar.dayClick(this)">' + calendar[i].join('</td><td class="eformDay" onclick="eformCalendar.dayClick(this)">') + '</td></tr>';
+            calendar[i] = '<tr><td class="eformDay" onclick="pureJSCalendar.dayClick(this)">' + calendar[i].join('</td><td class="eformDay" onclick="pureJSCalendar.dayClick(this)">') + '</td></tr>';
         }        
 
         const calendarInnerHtml = calendar.join('');
