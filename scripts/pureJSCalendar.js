@@ -1,6 +1,8 @@
 //private calendar controller IIFE
 var pureJSCalendar = (function () {
-    let wrap, label, calYear, calMonth, calDateFormat, firstDay;
+    let wrap, label, calYear, calMonth, calDateFormat, firstDay, isIE11;
+
+    isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
 
     //check global variables for calendar widget and set default localization values
     if (window.months === undefined) {
@@ -109,7 +111,7 @@ var pureJSCalendar = (function () {
 
         var curr = document.querySelector('.curr')
         curr.innerHTML = '';
-        curr.prepend(calendar.calendar());
+        curr.appendChild(calendar.calendar());
 
         //disable days below minimal date
         if (eFormMinimalDate !== undefined) {
@@ -158,7 +160,7 @@ var pureJSCalendar = (function () {
             startDay = 7 + startDay;
         }
 
-        if (createCal.cache[year]) {
+        if (createCal.cache[year] && !isIE11) {
             if (createCal.cache[year][month]) {
                 return createCal.cache[year][month];
             }
@@ -227,8 +229,7 @@ var pureJSCalendar = (function () {
 
     //day click event function => than close
     const dayClick = function (element) {
-        const formatedDateStr = calYear + '-' + calMonth + '-' + element.innerHTML;
-        const dateResult = DateToString(new Date(formatedDateStr), calDateFormat);
+        const dateResult = DateToString(new Date(calYear, calMonth-1, parseInt(element.innerHTML)), calDateFormat);
 
         document.getElementById(eFormCalendarElement).value = dateResult;
         close();
@@ -269,13 +270,28 @@ var pureJSCalendar = (function () {
                 // Expand single digit format token 'd' to multi digit value '10' when needed
                 var tokenLength = Math.max(formatToken.length, datePartValue.toString().length);
             }
-            var zeroPad = (datePartValue.toString().length < formatToken.length ? "0".repeat(tokenLength) : "");
+            var zeroPad;
+            try {
+                zeroPad = (datePartValue.toString().length < formatToken.length ? "0".repeat(tokenLength) : "");
+            } catch (ex) {//IE11 repeat catched
+                zeroPad = (datePartValue.toString().length < formatToken.length ? repeatStringNumTimes("0", tokenLength) : "");
+            }
             return (zeroPad + datePartValue).slice(-tokenLength);
         });
 
         return formatString;
     }
     Date.prototype.ToString = function (formatStr) { return DateToString(this.toDateString(), formatStr); }
+
+    //IE11 repeat alternative
+    function repeatStringNumTimes(string, times) {
+        var repeatedString = "";
+        while (times > 0) {
+            repeatedString += string;
+            times--;
+        }
+        return repeatedString;
+    }
 
     //close event function (fadeout)
     function close() {
@@ -286,7 +302,10 @@ var pureJSCalendar = (function () {
     var remove = function () {
         try {
             document.getElementById(DOMstrings.divCal).remove();
-        } catch (ex) { }
+        } catch (ex) {//ie11 fix
+            const child = document.getElementById(DOMstrings.divCal);
+            child.parentNode.removeChild(child);
+        }
     }
 
     //parse date
