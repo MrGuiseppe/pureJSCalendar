@@ -7,5 +7,5 @@ The calendar can be simply opened by adding a line:</br>
 Exaple:</br>
 <b>pureJSCalendar.open('dd.MM.yyyy', 20, 30, 1, '2018-5-5', '2019-8-20', 'txtTest', 20)</b>
 
-The calendar can be simply closed by adding a line:
-pureJSCalendar.close();
+The calendar can be simply closed by adding a line:</br>
+<b>pureJSCalendar.close();</b>
