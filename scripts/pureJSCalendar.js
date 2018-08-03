@@ -279,14 +279,14 @@ var pureJSCalendar = (function () {
 
     //close event function (fadeout)
     function close() {
-        try {
-            fadeOutEffect(DOMstrings.divCalQ, remove);
-        } catch (ex) {}
+        fadeOutEffect(DOMstrings.divCalQ, remove);
     }
 
     //remove calendar box
     var remove = function () {
-        document.getElementById(DOMstrings.divCal).remove();
+        try {
+            document.getElementById(DOMstrings.divCal).remove();
+        } catch (ex) { }
     }
 
     //parse date
@@ -315,15 +315,17 @@ var pureJSCalendar = (function () {
 //plain javascript fadeout alternative
 function fadeOutEffect(selector, callback) {
     var fadeTarget = document.querySelector(selector);
-    var fadeEffect = setInterval(function () {
-        if (!fadeTarget.style.opacity) {
-            fadeTarget.style.opacity = 1;
-        }
-        if (fadeTarget.style.opacity > 0) {
-            fadeTarget.style.opacity -= 0.1;
-        } else {
-            clearInterval(fadeEffect);
-            callback();
-        }
-    }, 20);
+    if (fadeTarget != null) {
+        var fadeEffect = setInterval(function () {
+            if (!fadeTarget.style.opacity) {
+                fadeTarget.style.opacity = 1;
+            }
+            if (fadeTarget.style.opacity > 0) {
+                fadeTarget.style.opacity -= 0.1;
+            } else {
+                clearInterval(fadeEffect);
+                callback();
+            }
+        }, 20);
+    }
 }
