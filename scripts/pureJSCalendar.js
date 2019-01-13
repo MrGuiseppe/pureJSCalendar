@@ -92,7 +92,10 @@ var pureJSCalendar = (function () {
     //switches current month
     function switchMonth(next, month, year) {
         var curr = label.textContent.trim().split(' '), calendar, tempYear = parseInt(curr[1], 10);
-        month = month || ((next) ? ((curr[0] === window.months[11]) ? 0 : months.indexOf(curr[0]) + 1) : ((curr[0] === window.months[0]) ? 11 : months.indexOf(curr[0]) - 1));
+        if (month === undefined) {
+            month = ((next) ? ((curr[0] === window.months[11]) ? 0 : months.indexOf(curr[0]) + 1) : ((curr[0] === window.months[0]) ? 11 : months.indexOf(curr[0]) - 1));
+        }
+        
         if (!year) {
             if (next && month === 0) {
                 year = tempYear + 1;
@@ -263,6 +266,10 @@ var pureJSCalendar = (function () {
         formatString = formatString.replace(regEx, function (formatToken) {
             var datePartValue = dateObject[formatToken.slice(-1)];
             var tokenLength = formatToken.length;
+            
+            if (formatToken === 'MMMM') {
+                return window.months[dateObject.M - 1];
+            }
 
             // A conflict exists between specifying 'd' for no zero pad -> expand to '10' and specifying yy for just two year digits '01' instead of '2001'.  One expands, the other contracts.
             // so Constrict Years but Expand All Else
